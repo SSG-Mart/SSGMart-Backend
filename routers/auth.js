@@ -6,7 +6,55 @@ const date = new Date();
 
 // login
 
+router.post("/login", (req, res) => {
+  const { userName, password } = req.body;
+  console.log(userName, password);
+  if (userName && password) {
+    // find username and password in database
+    const sql = `SELECT * FROM user_data WHERE user_name = '${userName}' AND password = '${password}'`;
+    con.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.send({
+          status: 404,
+          data: {
+            msg: "Process failed Try again..",
+            color: "red",
+          },
+        });
+      } else {
+        if (result.length > 0) {
+          if (req.session.user) {
+            res.send(req.session.user);
+          } else {
+            req.session.user = { userName };
+            res.send(req.session);
+          }
+        } else {
+          if (req.session) {
+            req.session.destroy();
+          }
+          res.send({
+            status: 404,
+            data: {
+              msg: "User name or password is incorrect",
+              color: "red",
+            },
+          });
+        }
+      }
+    });
 
+  } else {
+    res.send({
+      status: 404,
+      data: {
+        msg: "Process failed Try again..",
+        color: "red",
+      },
+    });
+  }
+});
 // register
 router.post("/register", (req, res) => {
   const { formData } = req.body;
