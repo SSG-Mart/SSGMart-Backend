@@ -1,5 +1,27 @@
-const express = require('express')
+const express = require('express');
+var cors = require('cors');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+
+const authRoute = require('./routers/auth');
+const homeRoute = require('./routers/home');
+
 const app = express();
+const port = 8080;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(cookieParser());
+
+app.use(session({
+    secret: 'JDOQHFZSHFLMNUWFHXHBFUIVEBZVUHUIEFKLHJVDDLAOI',
+    resave: false,
+    saveUninitialized: false,
+    cookie:{
+        maxAge: 1000 * 60 * 60,
+    }
+}));
 
 
 // Print called API path
@@ -8,12 +30,11 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/", (req, res) => {
-    console.log("Trigered");
-    res.send("<h1>Project Initiated...</h1>");
-})
 
-const port = 8080;
+app.use('/api/auth', authRoute);
+app.use('/api/home', homeRoute);
+
+
 app.listen(port, () => {
     console.log(`Running Express Server On PORT ${port}`);
 })
