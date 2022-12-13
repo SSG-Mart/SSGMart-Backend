@@ -5,7 +5,6 @@ const router = Router();
 const date = new Date();
 
 // login
-
 router.post("/login", (req, res) => {
   const { userName, password } = req.body;
   console.log(userName, password);
@@ -44,7 +43,6 @@ router.post("/login", (req, res) => {
         }
       }
     });
-
   } else {
     res.send({
       status: 404,
@@ -131,7 +129,7 @@ router.post("/register", (req, res) => {
               } else {
                 // Get Current Date
                 const currentDate = `${date.getFullYear()}-${date.getUTCDate()}-${date.getDate()}`;
-                
+
                 // Insert data to database
                 const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}','${password2}','${image}]')`;
                 con.query(sql, (err) => {
@@ -189,6 +187,21 @@ router.post("/logout", (req, res) => {
       status: 404,
       data: {
         msg: "Session destroy failed",
+        color: "red",
+      },
+    });
+  }
+});
+
+//Check auth
+router.post("/checkAuth", (req, res) => {
+  if (req.session.user) {
+    res.send(req.session.user);
+  } else {
+    res.send({
+      // status: 404,
+      data: {
+        msg: "Not Session",
         color: "red",
       },
     });
