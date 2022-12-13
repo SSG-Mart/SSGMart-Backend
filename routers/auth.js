@@ -1,7 +1,11 @@
 const { Router } = require("express");
 const con = require("../components/Connection");
 const router = Router();
+const path = require("path");
+var cors = require("cors");
+const multer = require("multer");
 
+router.use(cors());
 const date = new Date();
 
 // login
@@ -53,7 +57,41 @@ router.post("/login", (req, res) => {
     });
   }
 });
+
 // register
+
+// avatar image submit
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, "../img/user"),
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+router.post("/avatar_submit", async (req, res) => {
+  try {
+    let upload = multer({ storage: storage }).single("avatar");
+
+    upload(req, res, (err) => {
+      if (!req.file) {
+        return res.send("Please select a file to upload");
+      } else if (err instanceof multer.MulterError) {
+        console.log("1", err);
+        return res.send(err);
+      } else if (err) {
+        console.log("2", err);
+        return res.send(err);
+      } else {
+        console.log("Avatar upload success");
+        res.send(req.file.filename);
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+//register submit
 router.post("/register", (req, res) => {
   const { formData } = req.body;
   const {
