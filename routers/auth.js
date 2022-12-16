@@ -6,7 +6,7 @@ var cors = require("cors");
 const multer = require("multer");
 
 router.use(cors());
-const date = new Date();
+
 
 // login
 router.post("/login", (req, res) => {
@@ -61,10 +61,13 @@ router.post("/login", (req, res) => {
 // register
 
 // avatar image submit
+let image_for_database;
 const storage = multer.diskStorage({
   destination: path.join(__dirname, "../img/user"),
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+    image_for_database = Date.now() + "-" + file.originalname;
+    cb(null, image_for_database);
+    // cb(null, file.originalname);
   },
 });
 
@@ -83,7 +86,7 @@ router.post("/avatar_submit", async (req, res) => {
         return res.send(err);
       } else {
         console.log("Avatar upload success");
-        res.send(req.file.filename);
+        res.send("Avatar upload success");
       }
     });
   } catch (err) {
@@ -94,6 +97,7 @@ router.post("/avatar_submit", async (req, res) => {
 //register submit
 router.post("/register", (req, res) => {
   const { formData } = req.body;
+
   const {
     firstName,
     lastName,
@@ -106,18 +110,7 @@ router.post("/register", (req, res) => {
     checkbox,
   } = formData;
 
-  if (
-    firstName &&
-    lastName &&
-    userName &&
-    mobile &&
-    email &&
-    image &&
-    password1 &&
-    password2 &&
-    password1 === password2 &&
-    checkbox === true
-  ) {
+  if ( firstName && lastName && userName && mobile && email && image && password1 && password2 && password1 === password2 && checkbox === true) {
     const sql_check_username = `SELECT * FROM user_data WHERE user_name = '${userName}'`;
     const sql_check_email = `SELECT * FROM user_data WHERE email = '${email}'`;
 
@@ -166,10 +159,11 @@ router.post("/register", (req, res) => {
                 });
               } else {
                 // Get Current Date
-                const currentDate = `${date.getFullYear()}-${date.getUTCDate()}-${date.getDate()}`;
-
+                const date = new Date();
+                const currentDate = `${date.getFullYear()}-${date.getUTCDate()-1}-${date.getDate()}`;
+                console.log(currentDate);
                 // Insert data to database
-                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}','${password2}','${image}]')`;
+                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}','${password2}','${image_for_database}')`;
                 con.query(sql, (err) => {
                   if (err) {
                     console.log(err);
