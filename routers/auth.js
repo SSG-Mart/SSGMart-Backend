@@ -106,14 +106,14 @@ router.post("/register", (req, res) => {
     mobile,
     email,
     addressLine1,
-    city,
+    city_id,
     image,
     password1,
     password2,
     checkbox,
   } = formData;
 
-  if ( firstName && lastName && userName && mobile && email && image && addressLine1 && city && password1 && password2 && password1 === password2 && checkbox === true) {
+  if ( firstName && lastName && userName && mobile && email && image && addressLine1 && city_id && password1 && password2 && password1 === password2 && checkbox === true) {
     const sql_check_username = `SELECT * FROM user_data WHERE user_name = '${userName}'`;
     const sql_check_email = `SELECT * FROM user_data WHERE email = '${email}'`;
 
@@ -166,7 +166,7 @@ router.post("/register", (req, res) => {
                 const currentDate = `${date2.getFullYear()}-${date2.getMonth()+1}-${date2.getDate()}`;
                 console.log(currentDate);
                 // Insert data to database
-                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, address_one, city, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}', '${addressLine1}', '${city}','${password2}','${image_for_database}')`;
+                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, address_one, district_id, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}', '${addressLine1}', '${city_id}','${password2}','${image_for_database}')`;
 
                 // console.log(formData);
                 con.query(sql, (err) => {
