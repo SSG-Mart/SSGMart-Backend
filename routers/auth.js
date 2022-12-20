@@ -26,11 +26,12 @@ router.post("/login", (req, res) => {
           },
         });
       } else {
-        if (result.length > 0) {
+        if (result.length > 0 && result.length < 2) {
           if (req.session.user) {
-            res.send(req.session.user);
+            res.send(req.session);
           } else {
-            req.session.user = { userName };
+            const userID = result[0].M_ID
+            req.session.user =  {userID};
             res.send(req.session);
           }
         } else {
@@ -104,13 +105,15 @@ router.post("/register", (req, res) => {
     userName,
     mobile,
     email,
+    addressLine1,
+    city,
     image,
     password1,
     password2,
     checkbox,
   } = formData;
 
-  if ( firstName && lastName && userName && mobile && email && image && password1 && password2 && password1 === password2 && checkbox === true) {
+  if ( firstName && lastName && userName && mobile && email && image && addressLine1 && city && password1 && password2 && password1 === password2 && checkbox === true) {
     const sql_check_username = `SELECT * FROM user_data WHERE user_name = '${userName}'`;
     const sql_check_email = `SELECT * FROM user_data WHERE email = '${email}'`;
 
@@ -159,11 +162,13 @@ router.post("/register", (req, res) => {
                 });
               } else {
                 // Get Current Date
-                const date = new Date();
-                const currentDate = `${date.getFullYear()}-${date.getUTCDate()-1}-${date.getDate()}`;
+                const date2 = new Date();
+                const currentDate = `${date2.getFullYear()}-${date2.getMonth()+1}-${date2.getDate()}`;
                 console.log(currentDate);
                 // Insert data to database
-                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}','${password2}','${image_for_database}')`;
+                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, address_one, city, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}', '${addressLine1}', '${city}','${password2}','${image_for_database}')`;
+
+                // console.log(formData);
                 con.query(sql, (err) => {
                   if (err) {
                     console.log(err);

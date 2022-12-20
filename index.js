@@ -5,6 +5,8 @@ const session = require('express-session');
 
 const authRoute = require('./routers/auth');
 const homeRoute = require('./routers/home');
+const sellerProfileRoute = require('./routers/seller_profile');
+const addItemRoute = require('./routers/add_item');
 
 const app = express();
 const port = 8080;
@@ -33,6 +35,8 @@ app.use((req, res, next) => {
 
 app.use('/api/auth', authRoute);
 app.use('/api/home', homeRoute);
+app.use('/api/seller', sellerProfileRoute);
+app.use('/api/additem', addItemRoute);
 
 
 app.listen(port, () => {
