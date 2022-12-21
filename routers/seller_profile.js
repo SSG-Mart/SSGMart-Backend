@@ -62,17 +62,6 @@ router.post("/", (req, res) => {
     const store_name_from_client_side = req.body.store_name;
     // console.log(store_name_from_client_side);
 
-    //validate request authorized
-    let currentSessionID;
-    const {user} = req.session;
-    if(typeof(user) != 'undefined'){
-        //if user is authorized ?
-        create_response_for_authorized_request((user.userID).toString(), store_name_from_client_side);
-        currentSessionID = (user.userID).toString();
-    }
-    else{
-        //if user is un authorized ?
-
         if(store_name_from_client_side == typeof('undefined')){
             res.send('store name not found');
             return;
@@ -81,7 +70,7 @@ router.post("/", (req, res) => {
             let data1 = []
             let data2 = []
             
-            const sql = `SELECT * FROM seller_data WHERE store_name='${store_name_from_client_side}'`;
+            const sql = `select seller_data.*, user_data.mobile, user_data.image, district.name from seller_data INNER JOIN user_data on seller_data.M_ID=user_data.M_ID INNER JOIN district on user_data.district_id=district.district_id WHERE seller_data.store_name='${store_name_from_client_side}'`;
             con.query(sql, (err, result) => {
                 if(err){
                     console.log(err);
@@ -99,9 +88,11 @@ router.post("/", (req, res) => {
                             store_name: result[0].store_name,
                             ratings: result[0].ratings,
                             // nic: result[0].nic,
-                            nic_image: `img/${result[0].nic_image}`,
+                            // nic_image: `img/${result[0].image}`,
                             A_Status: result[0].A_Status,
                             date_of_register: result[0].date_of_register,
+                            city: result[0].name,
+                            mobile: result[0].mobile,
                             // R_admin_id: result[0].R_admin_id,
                             // R_reasan: result[0].R_reasan
                             
@@ -116,6 +107,7 @@ router.post("/", (req, res) => {
                                 return;
                             }
                             else{
+                                console.log(result.length)
                                 if(result.length > 0){
                                     result.forEach((item) => {
                                         data2.push({
@@ -129,15 +121,17 @@ router.post("/", (req, res) => {
                                             description: item.description,
                                             add_date: item.add_date,
                                             quantity: item.quantity,
-                                            image: `img/${item.image}`
+                                            image: `${item.image}`,
                                         });
                                     });
                                     console.log("send data");
+                                    console.log({data1,data2});
+
                                     res.send({data1,data2});
                                     return;
                                 }
                                 else{
-                                    res.send('no items found');
+                                    res.send({data1,data2});
                                     return;
                                 }
                             }
@@ -160,7 +154,7 @@ router.post("/", (req, res) => {
 
 
         // currentSessionID = "User Not login"
-    }
+
     
     // res.send(`From backend: ${currentSessionID}`);
     
