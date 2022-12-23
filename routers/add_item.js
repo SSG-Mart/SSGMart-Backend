@@ -95,12 +95,21 @@ router.post("/", (req, res) => {
     sub_category_id,
     unit_price,
     description,
+    time_period
   } = req.body;
 
-  if(title && category_id && quantity && image && unit && sub_category_id && unit_price && description){
+  if(title && category_id && quantity && image && unit && sub_category_id && unit_price && description, time_period){
+
+    const now = new Date();
+    const expire_date = new Date(new Date().getTime()+(time_period*24*60*60*1000));
+    // const mileSeconds = date.getTime();
+    // const current = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`
+    // const expire_date = '2021-05-05';
+
     // insert data into database
-    const sql = `INSERT INTO items(seller_id, C_ID, SC_ID, name, unit, unit_price, description, quantity, image) 
-    VALUES ('${sellerID}','${category_id}','${sub_category_id}','${title}','${unit}','${unit_price}','${description}',${quantity},'${image}')`;
+
+    const sql = `INSERT INTO items(seller_id, C_ID, SC_ID, name, unit, unit_price, description, add_date, expire_date, quantity, image) 
+    VALUES ('${sellerID}','${category_id}','${sub_category_id}','${title}','${unit}','${unit_price}','${description}','${now}', '${expire_date}','${quantity}','${image}')`;
 
     con.query(sql, (err, result) => {
       if (err) {
