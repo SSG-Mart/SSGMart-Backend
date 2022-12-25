@@ -49,7 +49,7 @@ router.post("/", (req, res) => {
                 result.forEach((item) => {
                   let today = new Date();
                   let expire_date = new Date(item.expire_date);
-                  const more = expire_date - today.getTime();
+                  const more = expire_date - today;
 
                   if (more > 0) {
                     data2.push({
