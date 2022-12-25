@@ -11,7 +11,12 @@ const con = require("../components/Connection");
 router.post("/", (req, res) => {
   const { user } = req.session;
   var data = [];
-  const sql = `SELECT items.*, seller_data.* FROM items INNER JOIN seller_data on items.seller_id=seller_data.seller_id`;
+  const sql = `SELECT items.*, seller_data.*, user_data.mobile 
+  FROM items 
+  INNER JOIN seller_data 
+  on items.seller_id=seller_data.seller_id
+  INNER JOIN user_data
+  on seller_data.M_ID=user_data.M_ID`;
 
   con.query(sql, (err, result) => {
     if (err) {
@@ -19,15 +24,15 @@ router.post("/", (req, res) => {
       res.send("database error");
       return;
     } else {
-      console.log(result.length);
+      console.log(result);
       if (result.length > 0) {
-        
         result.forEach((item) => {
           let today = new Date();
           let expire_date = new Date(item.expire_date);
           const more = expire_date - today;
 
           if (more > 0) {
+            console.log(item.mobile);
             data.push({
               item_id: item.item_id,
               seller_id: item.seller_id,
@@ -41,11 +46,9 @@ router.post("/", (req, res) => {
               expire_date: item.expire_date,
               quantity: item.quantity,
               image: item.image,
-              mobile:
-              typeof user == "undefined" ? "**********" : result[0].mobile,
+              mobile: typeof user == "undefined" ? "**********" : item.mobile,
               R_admin_id: item.R_admin_id,
               R_reasan: item.R_reasan,
-
 
               store_name: item.store_name,
               ratings: item.ratings,
@@ -60,7 +63,6 @@ router.post("/", (req, res) => {
       }
     }
   });
-
 });
 
 module.exports = router;
