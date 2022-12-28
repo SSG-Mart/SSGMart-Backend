@@ -111,7 +111,7 @@ router.post("/", (req, res) => {
       unit &&
       sub_category_id &&
       unit_price &&
-      description,
+      description &&
     time_period)
   ) {
     const now = new Date();
