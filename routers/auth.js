@@ -7,7 +7,6 @@ const multer = require("multer");
 
 router.use(cors());
 
-
 // login
 router.post("/login", (req, res) => {
   const { userName, password } = req.body;
@@ -30,8 +29,8 @@ router.post("/login", (req, res) => {
           if (req.session.user) {
             res.send(req.session);
           } else {
-            const userID = result[0].M_ID
-            req.session.user =  {userID};
+            const userID = result[0].M_ID;
+            req.session.user = { userID };
             res.send(req.session);
           }
         } else {
@@ -68,7 +67,6 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     image_for_database = Date.now() + "-" + file.originalname;
     cb(null, image_for_database);
-    // cb(null, file.originalname);
   },
 });
 
@@ -113,7 +111,20 @@ router.post("/register", (req, res) => {
     checkbox,
   } = formData;
 
-  if ( firstName && lastName && userName && mobile && email && image && addressLine1 && city_id && password1 && password2 && password1 === password2 && checkbox === true) {
+  if (
+    firstName &&
+    lastName &&
+    userName &&
+    mobile &&
+    email &&
+    image &&
+    addressLine1 &&
+    city_id &&
+    password1 &&
+    password2 &&
+    password1 === password2 &&
+    checkbox === true
+  ) {
     const sql_check_username = `SELECT * FROM user_data WHERE user_name = '${userName}'`;
     const sql_check_email = `SELECT * FROM user_data WHERE email = '${email}'`;
 
@@ -162,13 +173,11 @@ router.post("/register", (req, res) => {
                 });
               } else {
                 // Get Current Date
-                const date2 = new Date();
-                const currentDate = `${date2.getFullYear()}-${date2.getMonth()+1}-${date2.getDate()}`;
-                console.log(currentDate);
+                const currentDate = new Date();
+
                 // Insert data to database
                 const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, date_of_reg, email, address_one, district_id, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${currentDate}','${email}', '${addressLine1}', '${city_id}','${password2}','${image_for_database}')`;
 
-                // console.log(formData);
                 con.query(sql, (err) => {
                   if (err) {
                     console.log(err);
@@ -236,7 +245,6 @@ router.post("/checkAuth", (req, res) => {
     res.send(req.session.user);
   } else {
     res.send({
-      // status: 404,
       data: {
         msg: "Not Session",
         color: "red",
