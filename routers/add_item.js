@@ -91,6 +91,7 @@ router.use((req, res, next) => {
 
 router.post("/", (req, res) => {
   const { userID } = req.session.user;
+  const {userdata} = req.body;
   const {
     title,
     category_id,
@@ -101,7 +102,7 @@ router.post("/", (req, res) => {
     unit_price,
     description,
     time_period,
-  } = req.body;
+  } = userdata;
 
   if (
     (title &&
