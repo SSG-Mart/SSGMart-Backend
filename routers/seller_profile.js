@@ -35,6 +35,7 @@ router.post("/", (req, res) => {
             city: result[0].name,
             mobile:
               typeof user == "undefined" ? "**********" : result[0].mobile,
+              image: `${result[0].image}`,
           });
 
           // get item data from database
@@ -64,7 +65,7 @@ router.post("/", (req, res) => {
                       add_date: item.add_date,
                       moreTime: more,
                       quantity: item.quantity,
-                      image: `${item.image}`,
+                      image: `${item.image}`
                     });
                   }
                 });
