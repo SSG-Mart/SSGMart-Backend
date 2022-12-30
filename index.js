@@ -9,6 +9,7 @@ const sellerProfileRoute = require('./routers/seller_profile');
 const addItemRoute = require('./routers/add_item');
 const crudRoute = require('./routers/crud_item')
 const imageReturnRoute = require('./routers/image_return')
+const imageUpload = require('./routers/image_upload')
 
 const app = express();
 const port = 8080;
@@ -41,6 +42,7 @@ app.use('/api/seller', sellerProfileRoute);
 app.use('/api/additem', addItemRoute);
 app.use('/api/cruditem', crudRoute);
 app.use('/api/img', imageReturnRoute);
+app.use('/api/imgupload', imageUpload);
 
 
 
