@@ -11,12 +11,14 @@ const con = require("../components/Connection");
 router.post("/", (req, res) => {
   const { user } = req.session;
   var data = [];
-  const sql = `SELECT items.*, seller_data.*, user_data.mobile 
+  const sql = `SELECT items.*, seller_data.*, user_data.mobile , user_data.image as user_image, user_data.district_id, district.name as district_name 
   FROM items 
   INNER JOIN seller_data 
   on items.seller_id=seller_data.seller_id
   INNER JOIN user_data
-  on seller_data.M_ID=user_data.M_ID`;
+  on seller_data.M_ID=user_data.M_ID
+  inner join district
+  ON user_data.district_id=district.district_id`;
 
   con.query(sql, (err, result) => {
     if (err) {
@@ -46,7 +48,9 @@ router.post("/", (req, res) => {
               expire_date: item.expire_date,
               quantity: item.quantity,
               image: item.image,
+              user_image: item.user_image,
               mobile: typeof user == "undefined" ? "**********" : item.mobile,
+              district_name: item.district_name,
               R_admin_id: item.R_admin_id,
               R_reasan: item.R_reasan,
 
