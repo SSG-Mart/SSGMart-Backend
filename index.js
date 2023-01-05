@@ -9,6 +9,7 @@ const sellerProfileRoute = require('./routers/seller_profile');
 const addItemRoute = require('./routers/add_item');
 const crudRoute = require('./routers/crud_item')
 const imageReturnRoute = require('./routers/image_return')
+const sellerDashboardRoute = require('./routers/seller_dashboard')
 const imageUpload = require('./routers/image_upload')
 
 const app = express();
@@ -42,6 +43,7 @@ app.use('/api/seller', sellerProfileRoute);
 app.use('/api/additem', addItemRoute);
 app.use('/api/cruditem', crudRoute);
 app.use('/api/img', imageReturnRoute);
+app.use('/api/dashboard', sellerDashboardRoute);
 app.use('/api/imgupload', imageUpload);
 
 
