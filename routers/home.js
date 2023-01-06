@@ -43,6 +43,7 @@ router.post("/", (req, res) => {
               name: item.name,
               unit: item.unit,
               unit_price: item.unit_price,
+              discount: item.discount,
               description: item.description,
               add_date: item.add_date,
               expire_date: item.expire_date,
