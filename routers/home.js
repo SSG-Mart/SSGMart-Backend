@@ -26,7 +26,6 @@ router.post("/", (req, res) => {
       res.send("database error");
       return;
     } else {
-      console.log(result);
       if (result.length > 0) {
         result.forEach((item) => {
           let today = new Date();
