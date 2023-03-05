@@ -11,7 +11,7 @@ const con = require("../components/Connection");
 router.post("/", (req, res) => {
   const { user } = req.session;
   var data = [];
-  const sql = `SELECT items.*, seller_data.*, user_data.mobile , user_data.image as user_image, user_data.district_id, district.name as district_name 
+  const sql = `SELECT items.*, seller_data.*, user_data.mobile , user_data.image as user_image, user_data.district_id, user_data.restrict_ad as user_restrict, district.name as district_name 
   FROM items 
   INNER JOIN seller_data 
   on items.seller_id=seller_data.seller_id
@@ -32,7 +32,7 @@ router.post("/", (req, res) => {
           let expire_date = new Date(item.expire_date);
           const more = expire_date - today;
 
-          if (more > 0) {
+          if (more > 0 && item.restrict_ad == 0 && item.user_restrict == 0 && item.restrict_ad == 0) {
             console.log(item.mobile);
             data.push({
               item_id: item.item_id,
@@ -53,11 +53,10 @@ router.post("/", (req, res) => {
               district_name: item.district_name,
               R_admin_id: item.R_admin_id,
               R_reasan: item.R_reasan,
-
               store_name: item.store_name,
               ratings: item.ratings,
-              A_Status: item.A_Status,
               date_of_register: item.date_of_register,
+              seller_verification: item.admin_verification,
             });
           }
         });
