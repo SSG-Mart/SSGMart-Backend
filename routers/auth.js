@@ -174,7 +174,7 @@ router.post("/register", (req, res) => {
               } else {
 
                 // Insert data to database
-                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, status, email, address_one, district_id, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','0','${email}', '${addressLine1}', '${city_id}','${password2}','${image_for_database}')`;
+                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, email, address_one, district_id, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','${email}', '${addressLine1}', '${city_id}','${password2}','${image_for_database}')`;
 
                 con.query(sql, (err) => {
                   if (err) {

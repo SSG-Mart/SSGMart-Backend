@@ -17,14 +17,14 @@ router.post("/", (req, res) => {
     let data1 = [];
     let data2 = [];
 
-    const sql = `select seller_data.*, user_data.mobile, user_data.image, district.name from seller_data INNER JOIN user_data on seller_data.M_ID=user_data.M_ID INNER JOIN district on user_data.district_id=district.district_id WHERE seller_data.store_name='${store_name_from_client_side}'`;
+    const sql = `select seller_data.*, user_data.mobile, user_data.image, user_data.restrict_ad as user_restrict_ad, district.name from seller_data INNER JOIN user_data on seller_data.M_ID=user_data.M_ID INNER JOIN district on user_data.district_id=district.district_id WHERE seller_data.store_name='${store_name_from_client_side}'`;
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);
         res.send("database error");
         return;
       } else {
-        if (result.length > 0) {
+        if (result.length > 0 && result[0].restrict_ad == 0 && result[0].user_restrict_ad == 0) {
           data1.push({
             seller_id: result[0].seller_id,
             C_ID: result[0].C_ID,
@@ -36,6 +36,7 @@ router.post("/", (req, res) => {
             mobile:
               typeof user == "undefined" ? "**********" : result[0].mobile,
               image: `${result[0].image}`,
+            veryfy_seller: result[0].admin_verification,
           });
 
           // get item data from database
