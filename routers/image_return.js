@@ -107,7 +107,7 @@ router.get("/nic/:id", (req, res) => {
           res.send("Image doesn't exist..");
           return;
         }
-        res.writeHead(200, { "Content-Type": "image/jpeg" });
+        // res.writeHead(200, { "Content-Type": "image/jpeg" });
         res.end(data);
       });
     }
