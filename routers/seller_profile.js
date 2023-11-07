@@ -8,7 +8,7 @@ router.post("/", (req, res) => {
   //Get store name from client side
   const store_name_from_client_side = req.body.store_name;
 
-  if (store_name_from_client_side == typeof "undefined") {
+  if (typeof(store_name_from_client_side) == "undefined") {
     res.send("store name not found");
     return;
   } else {
@@ -24,7 +24,8 @@ router.post("/", (req, res) => {
         res.send("database error");
         return;
       } else {
-        if (result.length > 0 && result[0].restrict_ad == 0 && result[0].user_restrict_ad == 0) {
+        console.log('DDDD: ', result.length > 0 , result[0].user_restrict_ad == 0);
+        if (result.length > 0 && result[0].user_restrict_ad == 0) {
           data1.push({
             seller_id: result[0].seller_id,
             C_ID: result[0].C_ID,

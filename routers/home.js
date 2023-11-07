@@ -31,8 +31,8 @@ router.post("/", (req, res) => {
           let today = new Date();
           let expire_date = new Date(item.expire_date);
           const more = expire_date - today;
-
-          if (more > 0 && item.restrict_ad == 0 && item.user_restrict == 0 && item.restrict_ad == 0) {
+          console.log('more', more, item.R_admin_id == 1, item.user_restrict == 0);
+          if (more > 0 && item.R_admin_id == 1 && item.user_restrict == 0) {
             console.log(item.mobile);
             data.push({
               item_id: item.item_id,
@@ -60,9 +60,10 @@ router.post("/", (req, res) => {
             });
           }
         });
+        console.log(data);
         res.send(data);
       } else {
-        res.send("No data found");
+        res.send([]);
       }
     }
   });

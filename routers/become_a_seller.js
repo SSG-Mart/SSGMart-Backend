@@ -11,8 +11,9 @@ router.post("/", (req, res) => {
     res.send("unauthorized request");
   } else {
     const { userID } = user;
-    console.log("Category Id: ", req.body.C_ID);
-    slq = `INSERT INTO seller_data( store_name, M_ID, C_ID, nic, nic_image) VALUES( '${req.body.STORE_NAME}', '${userID}', '${req.body.C_ID}', '${req.body.NIC}', '${req.body.NIC_image}')`;
+    // console.log("Category Id: ", req.body.C_ID);
+    console.log(`'${req.body.STORE_NAME}', '${userID}', '${req.body.C_ID}', '${req.body.NIC}', '${req.body.NIC_image}'`);
+    var slq = `INSERT INTO seller_data( store_name, M_ID, C_ID, nic, nic_image) VALUES( '${req.body.STORE_NAME}', '${userID}', '${req.body.C_ID}', '${req.body.NIC}', '${req.body.NIC_image}')`;
     con.query(slq, (err, result) => {
       if (err) {
         console.log(err);
