@@ -34,6 +34,7 @@ router.post("/", (req, res) => {
             A_Status: result[0].A_Status,
             date_of_register: result[0].date_of_register,
             city: result[0].name,
+            verify_seller: result[0].verify_seller,
             mobile:
               typeof user == "undefined" ? "**********" : result[0].mobile,
               image: `${result[0].image}`,
@@ -41,7 +42,7 @@ router.post("/", (req, res) => {
           });
 
           // get item data from database
-          const sql = `SELECT item_id, seller_id, C_ID, SC_ID, name, unit, unit_price, description, add_date, expire_date, quantity, image FROM items WHERE seller_id=${result[0].seller_id}`;
+          const sql = `SELECT items.item_id, items.seller_id, items.C_ID, items.SC_ID, items.name, items.unit, items.unit_price, items.description, items.add_date, items.expire_date, items.quantity, items.image, seller_data.verify_seller FROM items inner join seller_data on items.seller_id = seller_data.seller_id WHERE items.seller_id=${result[0].seller_id}`;
           con.query(sql, (err, result) => {
             if (err) {
               console.log(err);
@@ -65,6 +66,7 @@ router.post("/", (req, res) => {
                       unit_price: item.unit_price,
                       description: item.description,
                       add_date: item.add_date,
+                      verify_seller: item.verify_seller,
                       moreTime: more,
                       quantity: item.quantity,
                       image: `${item.image}`
