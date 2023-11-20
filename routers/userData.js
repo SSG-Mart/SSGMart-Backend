@@ -55,5 +55,68 @@ router.post("/update", (req, res) => {
     
 })
 
+router.get("/wish-list", (req, res) => {
+    req.session.user.userID
+    const {userID} = req.session.user
+    
+    if(!userID) return res.send("login first");
+
+    const sql = `select wish_list.*, items.*, user_data.f_name, user_data.image, district.name as city, seller_data.store_name, seller_data.verify_seller from wish_list
+    inner JOIN items on wish_list.item_id = items.item_id
+    inner JOIN seller_data on seller_data.seller_id = items.seller_id
+    INNER JOIN user_data on user_data.M_ID = seller_data.M_ID
+    inner join district on user_data.district_id = district.district_id
+    WHERE CURRENT_TIMESTAMP() < CONVERT_TZ(STR_TO_DATE(items.expire_date, '%a %b %d %Y %H:%i:%s'), '+00:00', '+05:30') and wish_list.M_ID=${userID}`
+
+    con.query(sql, (err, result) => {
+        if(err){
+            throw err;
+        }
+        else{
+            let user_data
+            let item_data
+
+            if(result.length > 0){
+                user_data = {
+                    image: result[0].image,
+                    store_name: result[0].store_name,
+                    verify_seller: result[0].verify_seller,
+                    city: result[0].city,
+                }
+
+                item_data = result.map(item => {
+                    let today = new Date();
+                    let expire_date = new Date(item.expire_date);
+                    const more = expire_date - today;
+
+                    if (more > 0) {
+                            return {
+                                item_id: item.item_id,
+                                seller_id: item.seller_id,
+                                category_id: item.C_ID,
+                                sub_category_id: item.SC_ID,
+                                name: item.name,
+                                unit: item.unit,
+                                unit_price: item.unit_price,
+                                description: item.description,
+                                add_date: item.add_date,
+                                verify_seller: item.verify_seller,
+                                moreTime: more,
+                                quantity: item.quantity,
+                                image: `${item.image}`
+                            }
+                        }
+                        })
+                    }
+                    const data = {
+                        user_data,
+                        item_data
+                    }
+            console.log(data);
+            res.send(data);
+        }
+    })
+})
+
 
 module.exports = router;
