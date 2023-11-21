@@ -73,45 +73,45 @@ router.get("/wish-list", (req, res) => {
             throw err;
         }
         else{
-            let user_data
-            let item_data
+            var data = []
 
             if(result.length > 0){
-                user_data = {
-                    image: result[0].image,
-                    store_name: result[0].store_name,
-                    verify_seller: result[0].verify_seller,
-                    city: result[0].city,
-                }
 
-                item_data = result.map(item => {
+                data = result.map(item => {
                     let today = new Date();
                     let expire_date = new Date(item.expire_date);
                     const more = expire_date - today;
 
                     if (more > 0) {
+
                             return {
-                                item_id: item.item_id,
-                                seller_id: item.seller_id,
-                                category_id: item.C_ID,
-                                sub_category_id: item.SC_ID,
-                                name: item.name,
-                                unit: item.unit,
-                                unit_price: item.unit_price,
-                                description: item.description,
-                                add_date: item.add_date,
-                                verify_seller: item.verify_seller,
-                                moreTime: more,
-                                quantity: item.quantity,
-                                image: `${item.image}`
+                                item: {
+                                    item_id: item.item_id,
+                                    seller_id: item.seller_id,
+                                    category_id: item.C_ID,
+                                    sub_category_id: item.SC_ID,
+                                    name: item.name,
+                                    unit: item.unit,
+                                    unit_price: item.unit_price,
+                                    description: item.description,
+                                    add_date: item.add_date,
+                                    verify_seller: item.verify_seller,
+                                    moreTime: more,
+                                    quantity: item.quantity,
+                                    image: `${item.image}`,
+                                    like: true
+                                },
+                                user_data: {
+                                    image: item.image,
+                                    store_name: item.store_name,
+                                    verify_seller: item.verify_seller,
+                                    city: item.city,
+                                }
                             }
                         }
                         })
                     }
-                    const data = {
-                        user_data,
-                        item_data
-                    }
+                    
             console.log(data);
             res.send(data);
         }
