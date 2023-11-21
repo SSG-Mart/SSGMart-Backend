@@ -69,7 +69,8 @@ router.post("/", (req, res) => {
                       verify_seller: item.verify_seller,
                       moreTime: more,
                       quantity: item.quantity,
-                      image: `${item.image}`
+                      image: `${item.image}`,
+                      link: true
                     });
                   }
                 });
@@ -92,5 +93,64 @@ router.post("/", (req, res) => {
     return;
   }
 });
+
+
+// get likeness
+router.get('/like/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    const { user } = req.session;
+
+    if (!user) return res.send("login first");
+
+    const sql = `SELECT * FROM wish_list WHERE item_id=${item_id} and M_ID=${user.userID}`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.send("database error");
+        } else {
+            if (result.length > 0) {
+                return res.send({ like: true });
+            } else {
+                return res.send({ like: false });
+            }
+        }
+    });
+})
+
+// delete wish-list/like row
+router.delete('/like/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    const { user } = req.session;
+
+    if (!user) return res.send("login first");
+
+    const sql = `DELETE FROM wish_list WHERE item_id=${item_id} and M_ID=${user.userID}`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.send("database error");
+        } else {
+            return res.send({ like: false });
+        }
+    });
+})
+
+// add to wish-list
+router.post('/like/:item_id', (req, res) => {
+    const { item_id } = req.params;
+    const { user } = req.session;
+
+    if (!user) return res.send("login first");
+
+    const sql = `INSERT INTO wish_list (item_id, M_ID) VALUES (${item_id}, ${user.userID})`;
+    con.query(sql, (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.send("database error");
+        } else {
+            return res.send({ like: true });
+        }
+    });
+})
 
 module.exports = router;
