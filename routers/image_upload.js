@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 const upload = require("express-fileupload");
-const con = require("../components/Connection");
+const con = require("../config/Connection");
 
 router.use(upload());
 
