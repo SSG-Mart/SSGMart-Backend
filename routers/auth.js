@@ -1,20 +1,22 @@
 const { Router } = require("express");
-const con = require("../components/Connection");
+const con = require("../config/Connection");
 const router = Router();
 const path = require("path");
 var cors = require("cors");
 const multer = require("multer");
+var bcrypt = require("bcryptjs");
 
 router.use(cors());
 
 // login
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
   const { userName, password } = req.body;
-  console.log(userName, password);
+  // const hash = await bcrypt.hash(password, 10);
+  // const decrypted = await bcrypt.compare(password, hash);
   if (userName && password) {
     // find username and password in database
-    const sql = `SELECT * FROM user_data WHERE user_name = '${userName}' AND password = '${password}'`;
-    con.query(sql, (err, result) => {
+    const sql = `SELECT * FROM user_data WHERE user_name = '${userName}'`;
+    con.query(sql, async (err, result) => {
       if (err) {
         console.log(err);
         res.send({
@@ -24,8 +26,18 @@ router.post("/login", (req, res) => {
             color: "red",
           },
         });
+      } else if (result.length == 0) {
+        return res.send({
+          status: 404,
+          data: {
+            msg: "User name or password is incorrect",
+            color: "red",
+          },
+        });
       } else {
-        if (result.length > 0 && result.length < 2) {
+        const compare = await bcrypt.compare(password, result[0].password);
+        // compare password
+        if (result.length == 1 && compare) {
           if (req.session.user) {
             res.send(req.session);
           } else {
@@ -58,7 +70,6 @@ router.post("/login", (req, res) => {
   }
 });
 
-// register
 
 // avatar image submit
 let image_for_database;
@@ -78,10 +89,8 @@ router.post("/avatar_submit", async (req, res) => {
       if (!req.file) {
         return res.send("Please select a file to upload");
       } else if (err instanceof multer.MulterError) {
-        console.log("1", err);
         return res.send(err);
       } else if (err) {
-        console.log("2", err);
         return res.send(err);
       } else {
         console.log("Avatar upload success");
@@ -94,7 +103,7 @@ router.post("/avatar_submit", async (req, res) => {
 });
 
 //register submit
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
   const { formData } = req.body;
 
   const {
@@ -125,6 +134,33 @@ router.post("/register", (req, res) => {
     password1 === password2 &&
     checkbox === true
   ) {
+
+    // email format and password length validation
+    const email_format = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const password_length = password1.length;
+
+    if (!email_format.test(email)) {
+      console.log("Email format error");
+      return res.send({
+        status: 201,
+        data: {
+          msg: "Email format error",
+          color: "red",
+        },
+      });
+    }
+
+    if (password_length < 8) {
+      console.log("Password length error");
+      return res.send({
+        status: 201,
+        data: {
+          msg: "Password length error",
+          color: "red",
+        },
+      });
+    }
+
     const sql_check_username = `SELECT * FROM user_data WHERE user_name = '${userName}'`;
     const sql_check_email = `SELECT * FROM user_data WHERE email = '${email}'`;
 
@@ -141,7 +177,6 @@ router.post("/register", (req, res) => {
         });
       } else {
         if (result.length > 0) {
-          console.log("User name already exist");
           res.send({
             status: 201,
             data: {
@@ -151,7 +186,7 @@ router.post("/register", (req, res) => {
           });
         } else {
           // Check email already exist
-          con.query(sql_check_email, (err, result1) => {
+          con.query(sql_check_email, async (err, result1) => {
             if (err) {
               console.log(err);
               res.send({
@@ -172,9 +207,9 @@ router.post("/register", (req, res) => {
                   },
                 });
               } else {
-
+                const hash = await bcrypt.hash(password1, 10);
                 // Insert data to database
-                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, email, address_one, district_id, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','${email}', '${addressLine1}', '${city_id}','${password2}','${image_for_database}')`;
+                const sql = `INSERT INTO user_data(f_name, l_name, user_name, mobile, email, address_one, district_id, password, image) VALUES ('${firstName}','${lastName}','${userName}','${mobile}','${email}', '${addressLine1}', '${city_id}','${hash}','${image_for_database}')`;
 
                 con.query(sql, (err) => {
                   if (err) {
@@ -250,7 +285,5 @@ router.post("/checkAuth", (req, res) => {
     });
   }
 });
-
-
 
 module.exports = router;

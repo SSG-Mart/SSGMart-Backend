@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 
-const con = require("../components/Connection");
+const con = require("../config/Connection");
 
 // router.use((req, res, next) => {
 //   if (req.session.user) next();

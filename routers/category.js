@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router();
-const con = require("../components/Connection");
+const con = require("../config/Connection");
 
 router.post("/", (req, res) => {
   

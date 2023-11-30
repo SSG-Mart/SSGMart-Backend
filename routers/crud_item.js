@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const con = require("../components/Connection");
+const con = require("../config/Connection");
 const router = Router();
 
 // Give Seller Dashboard Data (Seller Dashboard)
