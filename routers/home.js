@@ -32,7 +32,7 @@ router.post("/", (req, res) => {
           let expire_date = new Date(item.expire_date);
           const more = expire_date - today;
           console.log('more', more, item.R_admin_id == 1, item.user_restrict == 0);
-          if (more > 0 && item.R_admin_id == 1 && item.user_restrict == 0) {
+          if (more > 0 && item.R_admin_id == 1 && item.user_restrict == 0 && item.activation_state == 1) {
             console.log(item.mobile);
             data.push({
               item_id: item.item_id,
