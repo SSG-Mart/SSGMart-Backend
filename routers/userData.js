@@ -61,7 +61,7 @@ router.get("/wish-list", (req, res) => {
     
     if(!userID) return res.send("login first");
 
-    const sql = `select wish_list.*, items.*, user_data.f_name, user_data.image, district.name as city, seller_data.store_name, seller_data.verify_seller from wish_list
+    const sql = `select wish_list.*, items.*, user_data.f_name, user_data.image as user_image, district.name as city, seller_data.store_name, seller_data.verify_seller from wish_list
     inner JOIN items on wish_list.item_id = items.item_id
     inner JOIN seller_data on seller_data.seller_id = items.seller_id
     INNER JOIN user_data on user_data.M_ID = seller_data.M_ID
@@ -102,7 +102,7 @@ router.get("/wish-list", (req, res) => {
                                     like: true
                                 },
                                 user_data: {
-                                    image: item.image,
+                                    image: item.user_image,
                                     store_name: item.store_name,
                                     verify_seller: item.verify_seller,
                                     city: item.city,
