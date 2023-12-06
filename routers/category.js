@@ -81,7 +81,8 @@ router.get('/item/:C_ID', (req, res) => {
               store_name: item.store_name,
               ratings: item.ratings,
               date_of_register: item.date_of_register,
-              seller_verification: item.admin_verification,
+              seller_verification: item.verify_seller,
+              more: more
             });
           }
         });
@@ -93,6 +94,22 @@ router.get('/item/:C_ID', (req, res) => {
     }
   });
 });
+
+//  get categories max price
+router.get('/max/:categoy_id', (req, res) => {
+  const {categoy_id} = req.params;
+
+  if(!categoy_id) return res.send("categoy_id reqired")
+
+  const sql = `select max(unit_price) from items where C_ID = ${categoy_id} limit 1`
+
+  con.query(sql, (err, result) => {
+    if(err) return res.status(500).send("database error")
+
+    console.log(result);
+    res.send(result[0])
+  })
+})
 
 
 
