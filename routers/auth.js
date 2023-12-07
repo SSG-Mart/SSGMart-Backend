@@ -161,6 +161,20 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    if(
+      !firstName.trim().length > 0 ||
+      !lastName.trim().length > 0 ||
+      !userName.trim().length > 0 ||
+      !addressLine1.trim().length > 0
+    ){
+      return res.send({
+        data: {
+          msg: "Process failed Try again..",
+          color: "red",
+        },
+      });
+    }
+
     const sql_check_username = `SELECT * FROM user_data WHERE user_name = '${userName}'`;
     const sql_check_email = `SELECT * FROM user_data WHERE email = '${email}'`;
 
